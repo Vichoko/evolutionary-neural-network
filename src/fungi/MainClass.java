@@ -28,7 +28,7 @@ public class MainClass {
 		data = (double[][]) dataNClasses2[0];
 		classes = (double[][]) dataNClasses2[1];*/
 		
-		NeuralNetwork net = new NeuralNetwork(0.2);
+		NeuralNetwork net = new NeuralNetwork();
 		net.newInputLayer(nFeatures, nFeatures);
 		net.newHiddenLayer(10);
 		net.newHiddenLayer(2);

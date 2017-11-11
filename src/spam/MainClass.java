@@ -50,7 +50,7 @@ public class MainClass {
 		classes = (double[][]) dataNClassesNdic[1];
 		
 		// Inicio de red neuronal
-		NeuralNetwork net = new NeuralNetwork(0.1);
+		NeuralNetwork net = new NeuralNetwork();
 		net.newInputLayer(dic.size(), dic.size());
 		net.newHiddenLayer(15);
 		net.newHiddenLayer(1);

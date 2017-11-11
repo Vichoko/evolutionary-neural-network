@@ -35,23 +35,19 @@ public class LayerNetworkTest {
 		assertEquals(second.getOutputSize(), 2);
 		double[] fres = first.synapsis(new double[] {1});
 		double[] sres = second.synapsis(new double[] {2, 3});
-		assertEquals(first.getPastOutputs().length, first.getOutputSize());
-		assertEquals(second.getPastOutputs().length, second.getOutputSize());
-		assertEquals(first.getPastOutputs(), fres);
-		assertEquals(second.getPastOutputs(), sres);
 		}
 
 	@Test
 	public void NetworkTest() throws Exception {
 		assertEquals(little.forwardFeed(new double[] {1,2}).length, 1);
 		assertEquals(bigger.forwardFeed(new double[] {1,2,4}).length, 10);
-		bigger.backPropagation(new double[] {1,2,3,4,5,6,7,8,9,10});
-		little.backPropagation(new double[] {1});
+		//bigger.backPropagation(new double[] {1,2,3,4,5,6,7,8,9,10});
+		//little.backPropagation(new double[] {1});
 	}
 	
 	
 	public void networkLogicGateSingleOutputTest(double[][] input, double[][] expectedOutput, String gateName, boolean verbose) throws Exception {
-		NeuralNetwork net = new NeuralNetwork(0.1);
+		NeuralNetwork net = new NeuralNetwork();
 		net.newInputLayer(2, 3);
 		net.newHiddenLayer(4);
 		net.newHiddenLayer(1);
@@ -94,7 +90,7 @@ public class LayerNetworkTest {
 		assertTrue(metricsData.get("tasa_desaciertos") < 0.20);
 	}	
 	public void networkLogicGateDoubleOutputTest(double[][] input, double[][] expectedOutput, String gateName, boolean verbose) throws Exception {
-		NeuralNetwork net = new NeuralNetwork(0.1);
+		NeuralNetwork net = new NeuralNetwork();
 		net.newInputLayer(2, 3);
 		net.newHiddenLayer(4);
 		net.newHiddenLayer(2);
@@ -261,7 +257,7 @@ public class LayerNetworkTest {
 	@Test
 	public void networkLinearFunctionSingleOutputLearningTest() throws Exception {
 		boolean verbose = true;
-		NeuralNetwork net = new NeuralNetwork(0.2);
+		NeuralNetwork net = new NeuralNetwork();
 		net.newInputLayer(2, 2);
 		net.newHiddenLayer(3);
 		net.newHiddenLayer(1);
@@ -278,7 +274,7 @@ public class LayerNetworkTest {
 			 * Si punto esta abajo+izquierda, clase 0.
 			 * Si punto esta arriba+derecha, clase 1.*/
 			input[i] = new double[] {Math.random()*100-50, Math.random()*100-50};
-			expectedOutput[i] = new double[] {NeuralTest.abovenrightFunction(input[i][0], input[i][1]) ? 1 : 0};						
+			expectedOutput[i] = new double[] {abovenrightFunction(input[i][0], input[i][1]) ? 1 : 0};						
 		}
 		// normalizar valores de entrada
 		input = utils.normalize(input, -50, 50);
@@ -311,7 +307,7 @@ public class LayerNetworkTest {
 	@Test
 	public void networkLinearFunctionDoubleOutputLearningTest() throws Exception {
 		boolean verbose = true;
-		NeuralNetwork net = new NeuralNetwork(0.2);
+		NeuralNetwork net = new NeuralNetwork();
 		net.newInputLayer(2, 2);
 		net.newHiddenLayer(3);
 		net.newHiddenLayer(2);
@@ -328,7 +324,7 @@ public class LayerNetworkTest {
 			 * Si punto esta abajo+izquierda, clase 0.
 			 * Si punto esta arriba+derecha, clase 1.*/
 			input[i] = new double[] {Math.random()*100-50, Math.random()*100-50};
-			expectedOutput[i] = NeuralTest.abovenrightFunction(input[i][0], input[i][1]) ? new double[] {0,1} : new double[] {1,0};						
+			expectedOutput[i] = abovenrightFunction(input[i][0], input[i][1]) ? new double[] {0,1} : new double[] {1,0};						
 		}
 		// normalizar valores de entrada
 		input = utils.normalize(input, -50, 50);
@@ -357,5 +353,15 @@ public class LayerNetworkTest {
 		assertTrue(metricsData.get("tasa_desaciertos") < 0.20);		
 	}
 	
+	static boolean abovenrightFunction(double x, double y) {
+		// Funcion es recta diagonal que corta plano en mitades, desde izq-arriba a der-abajo
+		// Y = -1*X
+		double image = -1*x;
+		if (image - y < 0) 
+			return true;
+		else
+			return false;
+		
+	}
 
 }

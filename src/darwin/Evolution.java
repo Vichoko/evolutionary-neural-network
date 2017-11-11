@@ -2,41 +2,56 @@ package darwin;
 
 import java.util.ArrayList;
 
+import network.NeuralNetwork;
+
 /**
  * 
  * @author Vicente Oyanedel M.
  *
  */
 public class Evolution {
-																	// gene
-																	// perfection
-	static int populationSize = 1000;
-	static double mutationRate = 0.02;
-
-	/**
+																	/**
 	 * Instance variables.
 	 */
 	int genCounter;
-	ArrayList<Individual> population;
+	public void incrGenCounter(){
+		genCounter++;
+	}
+	ArrayList<NeuralNetwork> population;
+
+	/**
+	 * @return the mutationRate
+	 */
+	public static double getMutationRate() {
+		return Global.mutationRate;
+	}
+
+	/**
+	 * @return the population
+	 */
+	public ArrayList<NeuralNetwork> getPopulation() {
+		return population;
+	}
 
 	/**
 	 * Instantiate new evolution system.
 	 */
-	public Evolution() {
+	public Evolution(NeuralNetwork model) {
 		genCounter = 0;
-		initPopulation(populationSize);
+		initPopulation(Global.populationSize, model);
 	}
 
 	/**
-	 * Generate initial population with random genetics.
+	 * Generate initial population with random genetics based in model scheme.
 	 * 
 	 * @param poblation
 	 *            size of population
 	 */
-	private void initPopulation(int poblation) {
-		population = new ArrayList<Individual>();
-		for (int i = 0; i < poblation; i++) {
-			population.add(new Individual(targetWord.length()));
+	private void initPopulation(int pupulationSize, NeuralNetwork model) {
+		population = new ArrayList<NeuralNetwork>();
+		for (int i = 0; i < Global.populationSize; i++) {
+			NeuralNetwork randomNN = new NeuralNetwork(model);
+			population.add(randomNN);
 		}
 	}
 
@@ -46,6 +61,7 @@ public class Evolution {
 	 * @param args
 	 *            Nothing
 	 */
+	/*
 	public static void main(String[] args) {
 		Evolution evo = new Evolution();
 		NaturalSelection ns = new NaturalSelection(evo.population, targetWord);
@@ -61,5 +77,5 @@ public class Evolution {
 		System.out.println("Secret word is: " + perfectOne.getGenesStr());
 		System.out.println("Found secret word my evolving " + evo.genCounter + " generations.");
 	}
-
+*/
 }

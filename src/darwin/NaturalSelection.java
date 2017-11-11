@@ -2,8 +2,13 @@ package darwin;
 
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
+
+import darwin.Global;
+import network.NeuralNetwork;
+import util.utils;
 
 /**
  * 
@@ -13,17 +18,19 @@ import java.util.Random;
 public class NaturalSelection {
 
 	public boolean existPerfectIndividual;
-	public Individual perfectIndividual;
+	public NeuralNetwork perfectIndividual;
 
-	List<Individual> population;
-
-	public List<Individual> getPopulation() {
+	List<NeuralNetwork> population;
+	public List<NeuralNetwork> getPopulation() {
 		return this.population;
 	}
+	
+	double[][] input;
+	double[][] expectedOutput;
 
 	public int populationSize;
 	public int totalFitness;
-	String perfectGenes;
+	//String perfectGenes;
 
 	/**
 	 * Instance with an initial 'population' and notion of perfect individual
@@ -34,54 +41,12 @@ public class NaturalSelection {
 	 * @param perfectGenes
 	 *            Genes of the perfect individual (max fitness).
 	 */
-	public NaturalSelection(List<Individual> population, String perfectGenes) {
+	public NaturalSelection(List<NeuralNetwork> population, double[][] input, double[][] expectedOutput) {
 		this.population = population;
 		this.populationSize = population.size();
 		this.existPerfectIndividual = false;
-		this.perfectGenes = perfectGenes;
-	}
-
-	/**
-	 * Pick an individual by roulette.
-	 * Fitness should be calculated before.
-	 * @return Individual picked.
-	 */
-	public Individual runRoulette() {
-	    float runningScore = 0;
-	    float rnd = (float) (Math.random() * this.totalFitness);
-	    for (Individual i : population)
-	    {   
-	        if (    rnd>=runningScore &&
-	                rnd<=runningScore+i.fitness)
-	        {
-	            return i;
-	        }
-	        runningScore+=i.fitness;
-	    }
-	    return null;
-	}
-
-	/**
-	 * updates fitness of every individual, then get max fitness individual.
-	 * 
-	 * @return Max fitness individual.
-	 */
-	public Individual getMaxFitness() {
-		updateFitness();
-		double max_fitness = Double.MIN_VALUE;
-		Individual max_fitness_individual = null;
-		for (Individual i : population) {
-			if (i.fitness > max_fitness) {
-				max_fitness = i.fitness;
-				max_fitness_individual = i;
-			}
-		}
-		if (max_fitness_individual.getGenesStr().equals(perfectGenes)) {
-			existPerfectIndividual = true;
-			perfectIndividual = max_fitness_individual;
-		}
-		System.out.println("Best fitness is " + max_fitness_individual.getGenesStr() + " with " + max_fitness_individual.fitness);
-		return max_fitness_individual;
+		this.input = input;
+		this.expectedOutput = expectedOutput;
 	}
 
 	/**
@@ -95,7 +60,7 @@ public class NaturalSelection {
 	 */
 	public void matingPhaseByRoulette(double mutationRate) {
 		Random rand = new Random();
-		List<Individual> children = new ArrayList<Individual>();
+		List<NeuralNetwork> children = new ArrayList<NeuralNetwork>();
 
 		for (int childIndex = 0; childIndex < populationSize;) {
 			children.add(runRoulette().sex(runRoulette(), mutationRate));
@@ -104,6 +69,35 @@ public class NaturalSelection {
 		this.updateGeneration(children);
 	}
 	
+	
+
+
+	/**
+	 * updates fitness of every individual, then get max fitness individual.
+	 * 
+	 * @return Max fitness individual.
+	 * @throws Exception 
+	 */
+	public NeuralNetwork getMaxFitness() throws Exception {
+		updateFitness();
+		double max_fitness = Double.MIN_VALUE;
+		NeuralNetwork max_fitness_individual = null;
+		for (NeuralNetwork i : population) {
+			if (i.getFitness() > max_fitness) {
+				max_fitness = i.getFitness();
+				max_fitness_individual = i;
+			}
+		}
+		if (max_fitness_individual.getFitness() == Global.MAX_FITNESS) { // maxFitness is 1.0
+			existPerfectIndividual = true;
+			perfectIndividual = max_fitness_individual;
+		}
+		System.out.println("Best fitness is " + max_fitness_individual.getFitness());
+		return max_fitness_individual;
+	}
+
+
+	
 	// private methods
 	/**
 	 * replaces the actual population with the new generation of childs.
@@ -111,16 +105,16 @@ public class NaturalSelection {
 	 * @param newGeneration
 	 *            List of child individuals.
 	 */
-	private void updateGeneration(List<Individual> newGeneration) {
+	private void updateGeneration(List<NeuralNetwork> newGeneration) {
 		this.population = newGeneration;
-
 	}
 	
-	private void updateFitness() {
+	private void updateFitness() throws Exception {
 		totalFitness = 0;
-		for (Individual i : population) {
+		for (NeuralNetwork i : population) {
 			calculateFitness(i);
-			totalFitness += i.fitness;
+			System.out.println("updating fitness of net: " + i.hashid);
+			totalFitness += i.getFitness();
 		}
 	}
 	
@@ -131,79 +125,33 @@ public class NaturalSelection {
 	 * @param i
 	 *            Individual which fitness will be calculated
 	 * @return fitness calculated.
+	 * @throws Exception 
 	 */
-	private int calculateFitness(Individual i) {
-		int fitness = 0;
-		assert (perfectGenes.length() == i.genes.length);
-		for (int genIndex = 0; genIndex < perfectGenes.length(); genIndex++) {
-			if (perfectGenes.toCharArray()[genIndex] == i.genes[genIndex]) {
-				fitness++;
-			}
-		}
-		i.setFitness(fitness);
-		return fitness;
-	}
-
-	
-
-	// deprecated because overcost of sorting
-	/**
-	 * Grabs pairs of survivors randomly and mate them to create a new child.
-	 * Until the population is recovered; i.e. populationSize childs are
-	 * created.
-	 * 
-	 * @param mutationRate
-	 *            Number between 0 and 1, probability of have a random mutation
-	 *            in a gene.
-	 */
-	@Deprecated
-	public void matingPhase(double mutationRate) {
-		Random rand = new Random();
-		List<Individual> children = new ArrayList<Individual>();
-		// mate pairs of 25% top races
-
-		assert (population.size() >= 2); // need at least 2 after selection
-		for (int childIndex = 0; childIndex < populationSize;) {
-			int firstParent = rand.nextInt(population.size());
-			int secondParent = firstParent;
-			while (firstParent == secondParent) {
-				// parents must not be the same individual
-				secondParent = rand.nextInt(population.size());
-			}
-
-			children.add(population.get(firstParent).sex(population.get(secondParent), mutationRate));
-			childIndex++;
-		}
-		this.updateGeneration(children);
-	}
-	
-
-	/**
-	 * sorts the population by fitness descending.
-	 */
-	@Deprecated
-	public void sortByFitness() {
-		updateFitness();
-		population.sort(new Comparator<Individual>() { // sort by fitness
-														// descending
-			public int compare(Individual o1, Individual o2) {
-				return -(o1.getFitness() - o2.getFitness());
-			}
-
-		});
+	private void calculateFitness(NeuralNetwork i) throws Exception {
+		boolean verbose = true;
+		HashMap<String, Double> metricsData = 
+				utils.binaryMetrics(i, input, expectedOutput, Global.predictionThreshold, verbose);
+		i.setFitness(metricsData.get("f1"));
 	}
 	
 	/**
-	 * Selects the 'selectRate' porcent of the top fitness individuals.
-	 * 
-	 * @param selectRate
-	 *            Number between 0 and 1, rate of survivors after genocide.
+	 * Pick an individual by roulette.
+	 * Fitness should be calculated before.
+	 * @return Individual picked.
 	 */
-	@Deprecated
-	public void selectStronger(double selectRate) {
-		sortByFitness();
-		int lastIndex = (int) Math.ceil((selectRate * populationSize)); // genocide
-		population = new ArrayList<Individual>(population.subList(0, lastIndex));
+	private NeuralNetwork runRoulette() {
+	    float runningScore = 0;
+	    float rnd = (float) (Math.random() * this.totalFitness);
+	    for (NeuralNetwork i : population)
+	    {   
+	        if (    rnd>=runningScore &&
+	                rnd<=runningScore+i.getFitness())
+	        {
+	            return i;
+	        }
+	        runningScore+=i.getFitness();
+	    }
+	    return null;
 	}
 	
 }

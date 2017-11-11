@@ -22,7 +22,7 @@ public class utils {
 	/**
 	 * Genera metricas para una red neuronal, a partir de datos de prueba; las cuales son retornadas en un HashMap. 
 	 * Las metricas disponibles se pueden obtener con las llaves:
-	 * "tasa_aciertos", "tasa_desaciertos", "precision" y "recall".
+	 * "tasa_aciertos", "tasa_desaciertos", "precision", "recall" y "f1"
 	 * 
 	 * Para predicciones binarias en las cuales hay solo 1 output y un threshold desde el cual se interperta como clase 1.
 	 * 

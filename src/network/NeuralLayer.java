@@ -3,11 +3,14 @@ package network;
 import java.util.Arrays;
 
 public class NeuralLayer {
-	int position;
 	Neuron[] neurons;
-	double[] pastOutputs;
+	int inputSize;
+	double hashid = 0;
+	
+	
 	/** CONSTRUCTORES*/
 	NeuralLayer(int n, double[] weights, double bias) {
+		inputSize = weights.length;
 		neurons = new Neuron[n];// explicit declaration
 		for (int i = 0; i < n; i++) {
 			neurons[i] = new Neuron(bias, weights);
@@ -21,25 +24,21 @@ public class NeuralLayer {
 	 */
 	NeuralLayer(int neuronQuantity, int inputSize) {
 		neurons = new Neuron[neuronQuantity];
+		this.inputSize = inputSize;
 		// todas las neuronas de una layer tienen la misma cantidad de pesos
 		// bias recomendado entre 0 y 1. Pesos recomendados entre 0 y 1.
 		for (int i = 0; i < neuronQuantity; i++) {
 			double[] weights = new double[inputSize];
 			for (int j = 0; j < inputSize; j++) {
 				weights[j] = Math.random();
+				hashid += weights[j];
 			}
-			neurons[i] = new Neuron(Math.random(), weights);
+			double bias = Math.random();
+			neurons[i] = new Neuron(bias, weights);
+			hashid += bias;
 		}
 	}
-	/** Obtiene salida predecida por la capa en la "sinapsis" previa.
-	 *  
-	 * @throws Exception Si no hubo sinapsis previa. */
-	double[] getPastOutputs() throws Exception {
-		if (pastOutputs == null) {
-			throw new Exception("Layer have not been feed before calling getPastOutputs.");
-		}
-		return pastOutputs;
-	}
+
 	
 	/** METODOS */
 	/**
@@ -61,7 +60,7 @@ public class NeuralLayer {
 			throw new Exception("inputs and weights have different sizes.");
 		}
 		
-		this.pastOutputs = new double[neurons.length];
+		double[] pastOutputs = new double[neurons.length];
 		for (int i = 0; i < pastOutputs.length; i++) {
 			pastOutputs[i] = neurons[i].synapsis(inputs);
 		}
@@ -69,19 +68,7 @@ public class NeuralLayer {
 		
 	}
 
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		NeuralLayer other = (NeuralLayer) obj;
-		if (!Arrays.equals(neurons, other.neurons))
-			return false;
-		return true;
-	}
+	
 	public void mutate(double mutationRate) {
 		for (Neuron n : this.neurons) {
 			n.mutate(mutationRate);
