@@ -82,7 +82,7 @@ public class LayerNetworkTest {
 			testOutput[i] = expectedOutput[randomIndex];
 		}
 		
-		double threshold = 0.5;
+		double threshold = 0.9;
 		HashMap<String, Double> metricsData = 
 				utils.binaryMetrics(net, testInput, testOutput, threshold, verbose);
 			

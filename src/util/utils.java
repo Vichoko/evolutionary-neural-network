@@ -60,21 +60,35 @@ public class utils {
 		int verdaderosNegativos = 0;
 		int falsosPositivos = 0;
 		int falsosNegativos = 0;
+		double error = 0;
+		double maxError = 0;
 		for (int i = 0; i < input.length; i++) {
-			int[] realOutput = net.binaryPredict(input[i], threshold);
+			double[] actualOutput = net.predict(input[i]);
+			for (int outIndex = 0; outIndex < actualOutput.length; outIndex++){
+				maxError++;
+				error = Math.pow(actualOutput[outIndex] - expectedOutput[i][outIndex],2);
+			}
+			
+			int[] actualBinaryOutput = new int[actualOutput.length];
+			int index = 0;
+			for (double out : actualOutput) {
+				actualBinaryOutput[index++] = out > threshold ? 1 : 0;
+			}
+
 			// expected class is 0
-			if (expectedOutput[i][0] == 0 && 0 == realOutput[0]) 
+			if (expectedOutput[i][0] == 0 && 0 == actualBinaryOutput[0]) 
 				verdaderosNegativos++;
-			else if (expectedOutput[i][0] == 0 && 1 == realOutput[0]) 
+			else if (expectedOutput[i][0] == 0 && 1 == actualBinaryOutput[0]) 
 				falsosPositivos++;
-			else if (expectedOutput[i][0] == 1 && 1 == realOutput[0])
+			else if (expectedOutput[i][0] == 1 && 1 == actualBinaryOutput[0])
 				verdaderosPositivos++;
-			else if (expectedOutput[i][0] == 1 && 0 == realOutput[0])
+			else if (expectedOutput[i][0] == 1 && 0 == actualBinaryOutput[0])
 				falsosNegativos++;
 			else
-				System.out.println("expected is "+expectedOutput[i][0]+" real is "+realOutput[0]);
+				System.out.println("expected is "+expectedOutput[i][0]+" real is "+actualBinaryOutput[0]);
 		}
-		
+
+
 	
 		double tasaAciertos = (verdaderosPositivos + verdaderosNegativos)*1.0/input.length;
 		double tasaDesaciertos = (falsosPositivos + falsosNegativos)*1.0/input.length;
@@ -87,6 +101,7 @@ public class utils {
 		metricsData.put("precision", p);
 		metricsData.put("recall", r);
 		metricsData.put("f1", 2*r*p/(r+p));
+		metricsData.put("anti-error", Math.pow(maxError,2) - error);
 		
 		if (verbose) {
 			System.out.println();

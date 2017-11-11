@@ -113,7 +113,7 @@ public class NaturalSelection {
 		totalFitness = 0;
 		for (NeuralNetwork i : population) {
 			calculateFitness(i);
-			System.out.println("updating fitness of net: " + i.hashid);
+			//System.out.println("updating fitness of net: " + i.hashid);
 			totalFitness += i.getFitness();
 		}
 	}
@@ -128,10 +128,10 @@ public class NaturalSelection {
 	 * @throws Exception 
 	 */
 	private void calculateFitness(NeuralNetwork i) throws Exception {
-		boolean verbose = true;
+		boolean verbose = false;
 		HashMap<String, Double> metricsData = 
 				utils.binaryMetrics(i, input, expectedOutput, Global.predictionThreshold, verbose);
-		i.setFitness(metricsData.get("f1"));
+		i.setFitness(metricsData.get("f1")*metricsData.get("anti-error"));
 	}
 	
 	/**

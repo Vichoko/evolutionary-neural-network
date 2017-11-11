@@ -190,7 +190,9 @@ public class NeuralNetwork {
 	public void train(double[][] input, double[][] expectedOutput, int nGen, String errorPlotName) throws Exception {
 		// recibe dataset de entrenamiento; varios input con sus respectivos
 		// output
-		nGen = 100;
+		System.out.println("train");
+
+		nGen = 3000;
 		if (input.length != expectedOutput.length) {
 			throw new Exception("train :: dataset input and expectedOutput arrays have different lenghts.");
 
@@ -201,22 +203,20 @@ public class NeuralNetwork {
 		int counter = 0;
 		int counter2 = 0;
 
-		
+
 		Evolution evo = new Evolution(this);
 		NaturalSelection ns = new NaturalSelection(evo.getPopulation(), input, expectedOutput);
-		ns.getMaxFitness();
 
-		for (int genIndex = 0; genIndex < nGen && ns.existPerfectIndividual; genIndex++) {
-			double f1 = 0;
+		for (int genIndex = 0; genIndex < nGen; genIndex++) {
+			System.out.println("gen" + genIndex);
+			fitnesses[genIndex] = ns.getMaxFitness().getFitness();
 			ns.matingPhaseByRoulette(evo.getMutationRate());
-			ns.getMaxFitness();
 			evo.incrGenCounter();
 
-			fitnesses[genIndex] = ns.getMaxFitness().getFitness();
 			// debug
 			if (counter2 == 0 || counter++ >= fraction || nGen < 100) {
 				System.out
-						.println("Elapsed: " + (counter2++ * 10) + "%, Generation: " + genIndex + ", F1 Score: " + f1);
+						.println("Elapsed: " + (counter2++ * 10) + "%, Generation: " + genIndex + ", Fitness: " + fitnesses[genIndex]);
 				counter = 0;
 			}
 		}
@@ -226,7 +226,7 @@ public class NeuralNetwork {
 			double[] x = new double[fitnesses.length];
 			for (int i = 0; i < x.length; i++)
 				x[i] = i + 1;
-			Plot plot = Plot.plot(Plot.plotOpts().title("f1 vs Epochs")).xAxis("Epochs", null).yAxis("Error", null)
+			Plot plot = Plot.plot(Plot.plotOpts().title("Fitness vs Generation")).xAxis("Epochs", null).yAxis("Fitness", null)
 					.series(null, Plot.data().xy(x, fitnesses), null);
 			plot.save(errorPlotName, "png");
 			System.out.println("train :: 'Plot' de errores cuadraticos guardado en ../" + errorPlotName + ".png");
