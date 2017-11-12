@@ -10,7 +10,7 @@ A neural network with an evolutionary training.
 # Motivación
 
 Modificar (red neuronal implementada)[https://github.com/Vichoko/neural-network], incorporando aprendizaje mediante un *algoritmo genético*. 
-Utilizando un esquema parecido al utilizado en el proyecto del ("Adivinador de palabras evolutivo")[https://github.com/Vichoko/evolutionary-guesser-of-words], implementado en el pasado.	
+Utilizando un esquema parecido al utilizado en el proyecto del ["Adivinador de palabras evolutivo"](https://github.com/Vichoko/evolutionary-guesser-of-words), implementado en el pasado.	
 
 El objetivo es comparar el desempeño con el entrenamiento evolutivo versus el entrenamiento por *Back Propagation", implementado en la Tarea 1.
 # Uso
@@ -129,13 +129,13 @@ Se entrenaron 100 generaciones; para todas las pruebas.
 A continuación, se muestra como aumenta el fitness del mejor individuo de cada población, a medida que avanzan las generaciones.
 
 #### OR
-![](images/OR.png?raw=true)
+![](img/OR.png?raw=true)
 #### XOR
-![](images/XOR.png?raw=true)
+![](img/XOR.png?raw=true)
 #### AND
-![](images/AND.png?raw=true)
+![](img/AND.png?raw=true)
 ### Función Lineal
-![](images/DIAG.png?raw=true)
+![](img/DIAG.png?raw=true)
 
 Se puede evidenciar una rápida convergencia a un máximo fitness.
 Sin embargo, al momento de evaluar el clasificador obtenido con esos pesos y biases; el desempeño es peor que el logrado con aprendizaje con Back-Propagation. 
@@ -154,7 +154,7 @@ Esto para independizar el valor predicho de la elección de un correcto "Threshol
 Lo primero que se observa es que tarda muchísimo más por generación, versus el método de aprendizaje por Back-Propagation.
 El entrenamiento con 50 generaciones tarda aproximadamente 1 hora y muestra la siguiente curva de aprendizaje:
 
-![](images/FUNGI.png?raw=true)
+![](img/FUNGI.png?raw=true)
 Se puede evidenciar como disminuye sus errores cuadraticos, convergiendo en torno a la generación 25.
 
 A pesar de esta convergencia, el clasificador entrega las siguientes métricas de desempeño:
