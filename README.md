@@ -129,13 +129,13 @@ Se entrenaron 100 generaciones; para todas las pruebas.
 A continuación, se muestra como aumenta el fitness del mejor individuo de cada población, a medida que avanzan las generaciones.
 
 #### OR
-![](https://i.imgur.com/Ee460I4.png)
+![](images/OR.png?raw=true)
 #### XOR
-![](https://i.imgur.com/SW6A2lZ.png)
+![](images/XOR.png?raw=true)
 #### AND
-![](https://i.imgur.com/jfq9U7k.png)
+![](images/AND.png?raw=true)
 ### Función Lineal
-![](https://i.imgur.com/JsTXqwq.png)
+![](images/DIAG.png?raw=true)
 
 Se puede evidenciar una rápida convergencia a un máximo fitness.
 Sin embargo, al momento de evaluar el clasificador obtenido con esos pesos y biases; el desempeño es peor que el logrado con aprendizaje con Back-Propagation. 
@@ -146,7 +146,7 @@ Es más, independiente del valor de threshold que se elija; el clasificador final
 
 Se entrenan las redes neuronales dadas las características de un hongo, poder predecir si es toxico o no.
 Esta prueba se corre ejecutando el archivo fungi.MainClass.java; para ello es necesario descargar el data-set.
-Más información en  [../src/fungi/README.md](https://github.com/Vichoko/neural-network/blob/master/src/fungi/README.md).
+Más información en  [../src/fungi/README.md](src/fungi/README.md).
 
 Este clasificador utiliza una doble salida (De dimensión 2). Salida que se interpreta como: El índice del mayor valor, es la clase predicha.
 Esto para independizar el valor predicho de la elección de un correcto "Threshold".
@@ -154,7 +154,7 @@ Esto para independizar el valor predicho de la elección de un correcto "Threshol
 Lo primero que se observa es que tarda muchísimo más por generación, versus el método de aprendizaje por Back-Propagation.
 El entrenamiento con 50 generaciones tarda aproximadamente 1 hora y muestra la siguiente curva de aprendizaje:
 
-![](https://i.imgur.com/D4C1jHo.png)
+![](images/FUNGI.png?raw=true)
 Se puede evidenciar como disminuye sus errores cuadraticos, convergiendo en torno a la generación 25.
 
 A pesar de esta convergencia, el clasificador entrega las siguientes métricas de desempeño:
@@ -178,7 +178,7 @@ Se entrenan las redes neuronales dados mensajes de texto (SMS), poder predecir s
 Esta prueba se corre ejecutando el archivo spam.MainClass.java; para ello es necesario descargar el data-set.
 
 La clase ejecuta todo el procesamiento de texto necesario para formatear los datos, entrenar las redes y mostrar los resultados; por lo que puede tardar varios minutos.
-Más información en  [../src/spam/README.md](https://github.com/Vichoko/neural-network/blob/master/src/spam/README.md).
+Más información en  [../src/spam/README.md](src/spam/README.md).
 
 
 
