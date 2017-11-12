@@ -9,7 +9,7 @@ A neural network with an evolutionary training.
 
 # Motivación
 
-Modificar (red neuronal implementada)[https://github.com/Vichoko/neural-network], incorporando aprendizaje mediante un *algoritmo genetico*. 
+Modificar (red neuronal implementada)[https://github.com/Vichoko/neural-network], incorporando aprendizaje mediante un *algoritmo genético*. 
 Utilizando un esquema parecido al utilizado en el proyecto del ("Adivinador de palabras evolutivo")[https://github.com/Vichoko/evolutionary-guesser-of-words], implementado en el pasado.	
 
 El objetivo es comparar el desempeño con el entrenamiento evolutivo versus el entrenamiento por *Back Propagation", implementado en la Tarea 1.
@@ -17,7 +17,7 @@ El objetivo es comparar el desempeño con el entrenamiento evolutivo versus el en
 ## Configurar algoritmo evolutivo
 
 Se hace desde el archivo darwin.Global.java.
-Permite variar los parametros:
+Permite variar los parámetros:
 
 	public static int populationSize = 500; // Tamaño de la población
 	public static double mutationRate = 0.05; // Probabilidad de mutación por gen (peso o bias)
@@ -29,8 +29,7 @@ Permite variar los parametros:
 
 ```Java
 
-	public NeuralNetwork(double learningRate) {...}
-	public NeuralNetwork() {...} // learning rate de 0.1
+	public NeuralNetwork() {...} // crea red neuronal vacía
 ```
 
 ### Crear capas
@@ -46,49 +45,49 @@ Permite variar los parametros:
 
 ```Java
 
-	public void train(double[][] input, double[][] expectedOutput, int nEpochs) throws Exception {...} /** input y expectedOutput deben tener la misma cantidad de elementos, 
-	nEpochs es la cantidad de veces que se entrenara con el dataSet.*/
+	public void train(double[][] input, double[][] expectedOutput, int nGens, bool isDualOutput, String plotName) throws Exception {...} /** input y expectedOutput deben tener la misma cantidad de elementos, 
+	nGen es la cantidad de generaciones que evolucionará en algoritmo.*/
 
 ```
 
 ### Predecir
 
-Metodo para hacer una prediccion individual, sobre un input cualquiera.
+Método para hacer una predicción individual, sobre un input cualquiera.
 
 ```Java
 
 	public double[] predict(double[] input) throws Exception {...} /** retorna vector de predicciones (con valores entre 0 y 1) con tamaño igual a la cantidad de neuronas de la capa de salida */
-	public int[] binaryPredict(double[] input, double threshold) throws Exception {...} /** Metodo para forzar predicciones binarias, se evalua cada elemento de la predicción mediante el threshold y se deja un valor 0 o 1 en el vector */
+	public int[] binaryPredict(double[] input, double threshold) throws Exception {...} /** Método para forzar predicciones binarias, se evalúa cada elemento de la predicción mediante el threshold y se deja un valor 0 o 1 en el vector */
 	
 ```
 
 # Detalle implementación
 
-Se tomó como base la implementación de la red neuronal, quitando el codigo no relevante para este proyecto. 
+Se tomó como base la implementación de la red neuronal, quitando el código no relevante para este proyecto. 
 
 Luego se comenzó a extender la implementación para adecuarse al esquema evolutivo: 
 Teniendo redes neuronales como individuos de una población, estas deben poder "aparearse" para producir descendencia. 
-Para ello se utilizó 'Test drive developement' acompañado de diseño esquematico, para incorporar estas funcionalidades.
+Para ello se utilizó 'Test drive developement' acompañado de diseño esquemático, para incorporar estas funcionalidades.
 
-Los tests para esta fase se encuentran en network.EvolutionNeuralNetworkTest.java.
-En ellos se comprueba que la creacion de redes neuronales esta correcto. Además, funciona correctamente el crossing-over de 2 redes neuronales y las mutaciones que pueden ocurrir en los pesos y bias.
+Los test para esta fase se encuentran en network.EvolutionNeuralNetworkTest.java.
+En ellos se comprueba que la creación de redes neuronales está correcta. Además, funciona correctamente el crossing-over de 2 redes neuronales y las mutaciones que pueden ocurrir en los pesos y bias.
 
-También se comprueba que las poblaciones estan cambiando de una generación a otra. 
+También se comprueba que las poblaciones están cambiando de una generación a otra. 
 ## Fitness
 
 Para evaluar el desempeño de un individuo (Red Neuronal) frente al resto de su población se define la siguiente función de fitness:
 
-Fitness = Puntaje_F1 * (ErrorMaximoPosible - Error)
-Puntaje_F1 = precision*recall*2/(precision+recall) o media armónica entre precision y recall.
+	Fitness = Puntaje_F1 * (ErrorMaximoPosible - Error)
+	Puntaje_F1 = precision*recall*2/(precision+recall) o media armónica entre precision y recall.
 
-ErrorMaximoPosible: Como outputs toman valor entre 0 y 1. Es la cantidad de outputs por la dimensión del output.
-Error cuadratico: Diferencia entre el valor actual obtenido de la red y el valor esperado para ese output, al cuadrado y agregado para todas los datos de entrenamiento.
+	* ErrorMaximoPosible: Como outputs toman valor entre 0 y 1. Es la cantidad de outputs por la dimensión del output.
+	* Error cuadrático: Diferencia entre el valor actual obtenido de la red y el valor esperado para ese output, al cuadrado y agregado para todos los datos de entrenamiento.
 
-Esto con el fin de que la red se acercara lo más posible a los valores esperados, mediante el calculo del error; y ponderandolo por el puntaje F1, que promedia las metricas de Precisión y Recall, en un valor entre 0 y 1.
+Esto con el fin de que la red se acercara lo más posible a los valores esperados, mediante el cálculo del error; y ponderándolo por el puntaje F1, que promedia las métricas de Precisión y Recall, en un valor entre 0 y 1.
 
-El utilizar el error cuadratico como fitness, fue encontrado como una técnica recurrente en publicaciones que tratan el tema. Sine mbargo, ponderarlo por el F1 es una incorporación propia, con el fin de maximizar el recall y precisión.
+El utilizar el error cuadrático como fitness, fue encontrado como una técnica recurrente en publicaciones que tratan el tema. Sine embargo, ponderarlo por el F1 es una incorporación propia, con el fin de maximizar el recall y precisión.
 
-Finalmente, se utilizó sólo el error cuadraitico para definir la función de fitness, teniendo un mayor valor si el error es menor, y un menor valor si el error es mayor.
+Finalmente, se utilizó sólo el error cuadrático para definir la función de fitness, teniendo un mayor valor si el error es menor, y un menor valor si el error es mayor.
 ## Reproducción
 
 Se produce un individuo Hijo (Red Neuronal) de 2 individuos Progenitores. El cual se concibe a partir de 2 procesos:
@@ -97,10 +96,10 @@ Se produce un individuo Hijo (Red Neuronal) de 2 individuos Progenitores. El cua
 Se producen los pesos y bias del Hijo a partir de una permutación de los genes de los progenitores, a través de una función aleatoria que asigna cada gen con la misma probabilidad.
 ### Mutación
 
-Se trabajaron con dos modelos de mutación en un gen (peso o bias),:
+Se trabajaron con dos modelos de mutación en un gen (peso o bias),
 
 	1. Generar un nuevo valor aleatorio (uniforme entre 0 y 1)
-	2. Generar una variación aditiva o disminutiva, en el 10% del valor actual del gen.
+	2. Generar una variación aditiva o diminutiva, en el 10% del valor actual del gen.
 	
 El que obtuvo mejores resultados (Individuo con fitness máxima) fue el segundo.
 
@@ -112,22 +111,22 @@ Se hicieron tres tipos de pruebas:
 	2. Clasificación de toxicidad de hongos
 	3. Clasificación de SPAM
 
-Los data-set y problemas de clasificacion son los mismos que los entregados en la Tarea 1. Esto para cumplir el objetivo de comparar el desempeño de las redes neuronales entrenadas con Algoritmos Evolutivos versus con Back Propagation.
+Los data-set y problemas de clasificación son los mismos que los entregados en la Tarea 1. Esto para cumplir el objetivo de comparar el desempeño de las redes neuronales entrenadas con Algoritmos Evolutivos versus con Back Propagation.
 	
 
 ## Batería de pruebas
 
-Se entrenan las redes neuronales con los valores de verdad de las compuertas logicas: OR, AND y XOR; y además con los puntos sobre y bajo una funcion linear cualquiera.
+Se entrenan las redes neuronales con los valores de verdad de las compuertas lógicas: OR, AND y XOR; y además con los puntos sobre y bajo una función linear cualquiera.
 Esta prueba se corre ejecutando el archivo network.LayerNetworkTest con JUnit.
 
 
-Luego de ejecutar muchas veces la batería de tests, y modificando los parametros del problema se convergió que los mejores desempeños se encuentran con una población de 500 individuos y un ratio de mutación de 0.05.
+Luego de ejecutar muchas veces la batería de test, y modificando los parámetros del problema se convergió que los mejores desempeños se encuentran con una población de 500 individuos y una ratio de mutación de 0.05.
 
-Se pueder la curva de aprendizaje en los siguientes gráficos, para cada una de las pruebas:
+Se evidencia la curva de aprendizaje en los siguientes gráficos, para cada una de las pruebas:
 ### Un solo output; clase determinada por umbral
 Se entrenaron 100 generaciones; para todas las pruebas. 
 
-A continuación se muestra como aumenta el fitness del mejor individuo de cada población, a medida que avanzan las generaciones.
+A continuación, se muestra como aumenta el fitness del mejor individuo de cada población, a medida que avanzan las generaciones.
 
 #### OR
 ![](https://i.imgur.com/Ee460I4.png)
@@ -135,26 +134,43 @@ A continuación se muestra como aumenta el fitness del mejor individuo de cada po
 ![](https://i.imgur.com/SW6A2lZ.png)
 #### AND
 ![](https://i.imgur.com/jfq9U7k.png)
-### Funcion Lineal
+### Función Lineal
 ![](https://i.imgur.com/JsTXqwq.png)
 
-Se puede evidenciar una rapida convergencia a un maximo fitness.
+Se puede evidenciar una rápida convergencia a un máximo fitness.
 Sin embargo, al momento de evaluar el clasificador obtenido con esos pesos y biases; el desempeño es peor que el logrado con aprendizaje con Back-Propagation. 
 Es más, independiente del valor de threshold que se elija; el clasificador final es equivalente a uno que dice todas las clases son verdaderas. Lo cual logra una tasa de aciertos del 50% (Esto dado que se balanceó las clases en el data-set de entrenamiento y test).
 
 
 ## Clasificación de hongos
 
-Se entrenan las redes neuronales dadas las caracterisitcas de un hongo, poder predecir si es toxico o no.
+Se entrenan las redes neuronales dadas las características de un hongo, poder predecir si es toxico o no.
 Esta prueba se corre ejecutando el archivo fungi.MainClass.java; para ello es necesario descargar el data-set.
 Más información en  [../src/fungi/README.md](https://github.com/Vichoko/neural-network/blob/master/src/fungi/README.md).
 
-Este clasificador utiliza una doble salida (De dimensión 2). Salida que se interpreta como: El indice del mayor valor, es la clase predicha.
+Este clasificador utiliza una doble salida (De dimensión 2). Salida que se interpreta como: El índice del mayor valor, es la clase predicha.
 Esto para independizar el valor predicho de la elección de un correcto "Threshold".
 
-Lo primero que se observa es que tarda muchisimo más por generación, versus el método de aprendizaje por Back-Propagation.
+Lo primero que se observa es que tarda muchísimo más por generación, versus el método de aprendizaje por Back-Propagation.
+El entrenamiento con 50 generaciones tarda aproximadamente 1 hora y muestra la siguiente curva de aprendizaje:
 
+![](https://i.imgur.com/D4C1jHo.png)
+Se puede evidenciar como disminuye sus errores cuadraticos, convergiendo en torno a la generación 25.
 
+A pesar de esta convergencia, el clasificador entrega las siguientes métricas de desempeño:
+
+	Metricas de desempeño de la red neuronal: 
+	Numero de experimentos: 8124
+	Verdaderos Positivos: 0
+	Verdaderos Negativos: 4208
+	Falsos Positivos: 0
+	Falsos Negativos: 3916
+	Tasa aciertos: 0.517971442639094; tasa desaciertos: 0.48202855736090594
+	Precision: NaN
+	Recall: 0.0
+	F1 Score: NaN
+	
+Resultados que muestran que realmente el clasificador está diciendo que todas las clases son 0. Lo cual es un clasificador malo.
 
 ## Clasificación de SPAM
 
@@ -163,6 +179,7 @@ Esta prueba se corre ejecutando el archivo spam.MainClass.java; para ello es nec
 
 La clase ejecuta todo el procesamiento de texto necesario para formatear los datos, entrenar las redes y mostrar los resultados; por lo que puede tardar varios minutos.
 Más información en  [../src/spam/README.md](https://github.com/Vichoko/neural-network/blob/master/src/spam/README.md).
+
 
 
 
