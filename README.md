@@ -9,10 +9,10 @@ A neural network with an evolutionary training.
 
 # Motivación
 
-Modificar (red neuronal implementada)[https://github.com/Vichoko/neural-network], incorporando aprendizaje mediante un *algoritmo genético*. 
+Modificar [red neuronal implementada](https://github.com/Vichoko/neural-network), incorporando aprendizaje mediante un *algoritmo genético*. 
 Utilizando un esquema parecido al utilizado en el proyecto del ["Adivinador de palabras evolutivo"](https://github.com/Vichoko/evolutionary-guesser-of-words), implementado en el pasado.	
 
-El objetivo es comparar el desempeño con el entrenamiento evolutivo versus el entrenamiento por *Back Propagation", implementado en la Tarea 1.
+El objetivo es comparar el desempeño con el entrenamiento evolutivo versus el entrenamiento por **Back Propagation**, implementado en la Tarea 1.
 # Uso
 ## Configurar algoritmo evolutivo
 
@@ -89,7 +89,7 @@ Esto con el fin de que la red se acercara lo más posible a los valores esperados
 
 El utilizar el error cuadrático como fitness, fue encontrado como una técnica recurrente en publicaciones que tratan el tema. Sine embargo, ponderarlo por el F1 es una incorporación propia, con el fin de maximizar el recall y precisión.
 
-Finalmente, se utilizó sólo el error cuadrático para definir la función de fitness, teniendo un mayor valor si el error es menor, y un menor valor si el error es mayor.
+**Finalmente, se utilizó sólo el error cuadrático para definir la función de fitness, teniendo un mayor valor si el error es menor, y un menor valor si el error es mayor.**
 ## Reproducción
 
 Se produce un individuo Hijo (Red Neuronal) de 2 individuos Progenitores. El cual se concibe a partir de 2 procesos:
@@ -103,7 +103,7 @@ Se trabajaron con dos modelos de mutación en un gen (peso o bias),
 	1. Generar un nuevo valor aleatorio (uniforme entre 0 y 1)
 	2. Generar una variación aditiva o diminutiva, en el 10% del valor actual del gen.
 	
-El que obtuvo mejores resultados (Individuo con fitness máxima) fue el segundo.
+El que obtuvo mejores resultados (Individuo con fitness máxima) fue el primero.
 
 # Resultados
 
@@ -183,11 +183,12 @@ La clase ejecuta todo el procesamiento de texto necesario para formatear los dat
 Más información en  [../src/spam/README.md](src/spam/README.md).
 
 Para este experimento ocurre algo interesante.
-La red neuronal utilizara para clasificar texto contiene una cantidad exorbitante de neuronas, dado que la literatura recomienda tener una capa de entrada con una cantidad de neuronas equivalente a la cantidad de *features* del problema; el cual en este caso es la cantidad de terminos en el diccionario (después de filtrar stop-words y hacer stemming).
-Por otro lado, el algoritmo genetico requiere instanciar una población masiva de redes neuronales; las cuales en este caso son masivamente grandess.
-El resultado final, es que el programa se cae dado que no logra instanciar la población inicial de redes neuronales; por que se acaba la memoria del equipo.
+La red neuronal utilizada para clasificar texto contiene una cantidad exorbitante de neuronas, dado que la literatura recomienda tener una capa de entrada con una cantidad de neuronas equivalente a la cantidad de *features* del problema; el cual en este caso es la cantidad de terminos en el diccionario (después de filtrar stop-words y hacer stemming).
 
-Este problema, a pesar de dejarnos míopes al resultado real. Nos habla de un problema intrínseco del entrenamiento de redes neuronales con algoritmos geneticos, que se discutirá en la conclusión.
+Por otro lado, el algoritmo genetico requiere instanciar una población masiva de redes neuronales; las cuales en este caso son gigantescas.
+El resultado final, es que el programa se cae dado que no logra instanciar la población inicial con una cantidad suficiente de redes neuronales; por que se acaba la memoria del equipo.
+
+Este problema, a pesar de dejarnos míopes al resultado real. Nos habla de un problema intrínseco del entrenamiento de redes neuronales con algoritmos geneticos, que tiene que ver con su alto requerimiento de recursos.
 
 # Conclusión
 Luego de ejecutar todas las pruebas explicadas anteriormente se concluye:
@@ -201,8 +202,12 @@ Si bien esto parece bueno, las metricas finales muestran un clasificador sin pod
 Esto puede ser por como se decidió que se haría el Crossing-Over entre 2 individuos. Además, de como ocurren las mutaciones dentro de los apareamientos. Y no menos importante, como se definió la función de Fitness.
 
 Se intentó con multiples modelos de apareamiento, mutación y fitness. De todos los probados, el que esta actualmente implementado fue el que alcanzó el mejor desempeño en términos de su curva de aprendizaje. Sin embargo, no se logró hacer un clasificador con un desempéño minimamente aceptable. 
+
 Referenciando a la literatura, existen varias publicaciones que tratan este tipo de aprendizaje, lo cual demuestra que es un tópico con profundidad teorica suficiente como para hacer una investigación en torno a ella. 
+
 Me parece sumamente interesante, dado que en un primer momento me pareció que podría lograr un mejor desempeño, dada la simplicidad conceptual que define los A.G.. Pero, en la práctica, resultó que en las sutilezas en la definición de la funcion de fitness, los procesos de crossing-over y mutación recae la mayoría de la responsabilidad de que el resultado final sea aceptable.
+
+Los Algoritmos Geneticos toman sentido viendolos como una versión mejorada de la fuerza bruta, por lo cual hereda parte de sus defectos (exigencia de tiempo y recursos). Aunque logra ser una clara mejora de esta ultima, para su mejor aplicación se requiere un diseño detallado y un ambiente operacional optimo (Por ejemplo, utilizar paralelismo).
 
 
 
