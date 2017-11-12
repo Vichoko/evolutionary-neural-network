@@ -63,6 +63,7 @@ public class MainClass {
 		net.train(data,
 				classes, 
 				20, 
+				false,
 				"SPAM");
 
 		double threshold = 0.4;

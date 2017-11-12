@@ -39,7 +39,8 @@ public class MainClass {
 		}
 		net.train(data,
 				classes, 
-				1000, 
+				50, 
+				true,
 				"FUNGI");
 
 		boolean verbose = true;

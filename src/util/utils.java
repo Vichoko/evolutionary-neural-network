@@ -66,8 +66,9 @@ public class utils {
 			double[] actualOutput = net.predict(input[i]);
 			for (int outIndex = 0; outIndex < actualOutput.length; outIndex++){
 				maxError++;
-				error = Math.pow(actualOutput[outIndex] - expectedOutput[i][outIndex],2);
+				error += Math.pow(actualOutput[outIndex] - expectedOutput[i][outIndex],2);
 			}
+
 			
 			int[] actualBinaryOutput = new int[actualOutput.length];
 			int index = 0;
@@ -101,7 +102,7 @@ public class utils {
 		metricsData.put("precision", p);
 		metricsData.put("recall", r);
 		metricsData.put("f1", 2*r*p/(r+p));
-		metricsData.put("anti-error", Math.pow(maxError,2) - error);
+		metricsData.put("anti_error", maxError - error);
 		
 		if (verbose) {
 			System.out.println();
@@ -161,30 +162,41 @@ public class utils {
 		int verdaderosNegativos = 0;
 		int falsosPositivos = 0;
 		int falsosNegativos = 0;
+		double error = 0;
+		double maxError = 0;
 		for (int i = 0; i < input.length; i++) {
-			double[] realOutput = net.predict(input[i]);
+			double[] actualOutput = net.predict(input[i]);
+			for (int outIndex = 0; outIndex < actualOutput.length; outIndex++){
+				maxError++;
+				error += Math.pow(actualOutput[outIndex] - expectedOutput[i][outIndex],2);
+			}
 			// expected class is 0
-			if (expectedOutput[i][0] >= expectedOutput[i][1] && realOutput[0] >= realOutput[1]) 
+			if (expectedOutput[i][0] >= expectedOutput[i][1] && actualOutput[0] >= actualOutput[1]) 
 				verdaderosNegativos++;
-			else if (expectedOutput[i][0] >= expectedOutput[i][1] && realOutput[0] < realOutput[1]) 
+			else if (expectedOutput[i][0] >= expectedOutput[i][1] && actualOutput[0] < actualOutput[1]) 
 				falsosPositivos++;
-			else if (expectedOutput[i][0] < expectedOutput[i][1] && realOutput[0] < realOutput[1])
+			else if (expectedOutput[i][0] < expectedOutput[i][1] && actualOutput[0] < actualOutput[1])
 				verdaderosPositivos++;
-			else if (expectedOutput[i][0] < expectedOutput[i][1] && realOutput[0] >= realOutput[1])
+			else if (expectedOutput[i][0] < expectedOutput[i][1] && actualOutput[0] >= actualOutput[1])
 				falsosNegativos++;
 			else
-				System.out.println("expected is "+expectedOutput[i][0]+" real is "+realOutput[0]);
+				System.out.println("expected is "+expectedOutput[i][0]+" real is "+actualOutput[0]);
 		}
 		
 	
 		double tasaAciertos = (verdaderosPositivos + verdaderosNegativos)*1.0/input.length;
 		double tasaDesaciertos = (falsosPositivos + falsosNegativos)*1.0/input.length;
+		double p = verdaderosPositivos*1.0/(verdaderosPositivos+falsosPositivos);
+		double r = verdaderosPositivos*1.0/(verdaderosPositivos+falsosNegativos);
 		
 		metricsData.put("tasa_aciertos", tasaAciertos);
 		metricsData.put("tasa_desaciertos", tasaDesaciertos);
-		metricsData.put("precision", verdaderosPositivos*1.0/(verdaderosPositivos+falsosPositivos));
-		metricsData.put("recall", verdaderosPositivos*1.0/(verdaderosPositivos+falsosNegativos));
-		
+		metricsData.put("precision", p);
+		metricsData.put("recall", r);
+		metricsData.put("anti_error", maxError - error);
+		metricsData.put("f1", 2*r*p/(r+p));
+
+
 		if (verbose) {
 			System.out.println();
 			System.out.println("Metricas de desempeño de la red neuronal: ");
@@ -196,7 +208,7 @@ public class utils {
 			System.out.println("Tasa aciertos: " + tasaAciertos + "; tasa desaciertos: " + tasaDesaciertos);
 			System.out.println("Precision: " + metricsData.get("precision"));
 			System.out.println("Recall: " + metricsData.get("recall"));
-				
+			System.out.println("F1 Score: " + metricsData.get("f1"));
 		}
 		
 		return metricsData;

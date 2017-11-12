@@ -6,6 +6,7 @@ import java.util.Arrays;
 import org.plot.Plot;
 
 import darwin.Evolution;
+import darwin.Global;
 import darwin.NaturalSelection;
 import util.utils;
 
@@ -92,14 +93,21 @@ public class NeuralNetwork {
 					} else {
 						thisNeuron.weights[weightIndex] = momNeuron.weights[weightIndex];
 					}
+					//double frac = Math.random();
+					//thisNeuron.weights[weightIndex] = (momNeuron.weights[weightIndex]*frac + dadNeuron.weights[weightIndex]*(1-frac));
 					hashid += thisNeuron.weights[weightIndex];
 				}
 				// bias cross over
+				
 				if (Math.random() < 0.5) {
 					thisNeuron.bias = dadNeuron.bias;
 				} else {
 					thisNeuron.bias = momNeuron.bias;
 				}
+				
+				//double frac = Math.random();
+				//thisNeuron.bias = (momNeuron.bias*frac + dadNeuron.bias*(1-frac));
+
 				hashid += thisNeuron.bias;
 			}
 		}
@@ -187,12 +195,11 @@ public class NeuralNetwork {
 	 *             En caso de detectar inconsistencias entre input y
 	 *             expectedOutput.
 	 */
-	public void train(double[][] input, double[][] expectedOutput, int nGen, String errorPlotName) throws Exception {
+	public void train(double[][] input, double[][] expectedOutput, int nGen, boolean isDual, String errorPlotName) throws Exception {
 		// recibe dataset de entrenamiento; varios input con sus respectivos
 		// output
 		System.out.println("train");
 
-		nGen = 3000;
 		if (input.length != expectedOutput.length) {
 			throw new Exception("train :: dataset input and expectedOutput arrays have different lenghts.");
 
@@ -206,11 +213,13 @@ public class NeuralNetwork {
 
 		Evolution evo = new Evolution(this);
 		NaturalSelection ns = new NaturalSelection(evo.getPopulation(), input, expectedOutput);
+		ns.sortByFitness(isDual);
 
 		for (int genIndex = 0; genIndex < nGen; genIndex++) {
-			System.out.println("gen" + genIndex);
-			fitnesses[genIndex] = ns.getMaxFitness().getFitness();
-			ns.matingPhaseByRoulette(evo.getMutationRate());
+			ns.selectStronger(Global.survivorsRate); // select some, kill the rest
+			ns.matingPhase(Global.mutationRate); // sex time
+			ns.sortByFitness(isDual);
+			fitnesses[genIndex] = ns.bestIndividual.getFitness();
 			evo.incrGenCounter();
 
 			// debug

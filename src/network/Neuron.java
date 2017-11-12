@@ -44,11 +44,16 @@ public class Neuron {
 	public void mutate(double mutationRate) {
 		for (int weightIndex = 0; weightIndex < this.weights.length; weightIndex++) {
 			if (Math.random() < mutationRate) {
-				if (Math.random() > 0.5){
+				this.weights[weightIndex] = Math.random();
+
+				/*
+				  if (Math.random() > 0.5){
+			
 					this.weights[weightIndex] += this.weights[weightIndex]*0.25;
 				} else {
 					this.weights[weightIndex] -= this.weights[weightIndex]*0.25;
-				}
+				}*/
+					 
 			}
 		}
 		if (Math.random() < mutationRate) {

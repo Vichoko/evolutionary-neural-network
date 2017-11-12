@@ -30,6 +30,9 @@ public class NaturalSelection {
 
 	public int populationSize;
 	public int totalFitness;
+	
+	public NeuralNetwork bestIndividual;
+	
 	//String perfectGenes;
 
 	/**
@@ -78,8 +81,8 @@ public class NaturalSelection {
 	 * @return Max fitness individual.
 	 * @throws Exception 
 	 */
-	public NeuralNetwork getMaxFitness() throws Exception {
-		updateFitness();
+	public NeuralNetwork getMaxFitness(boolean isDual) throws Exception {
+		updateFitness(isDual);
 		double max_fitness = Double.MIN_VALUE;
 		NeuralNetwork max_fitness_individual = null;
 		for (NeuralNetwork i : population) {
@@ -92,7 +95,7 @@ public class NaturalSelection {
 			existPerfectIndividual = true;
 			perfectIndividual = max_fitness_individual;
 		}
-		System.out.println("Best fitness is " + max_fitness_individual.getFitness());
+		//System.out.println("Best fitness is " + max_fitness_individual.getFitness());
 		return max_fitness_individual;
 	}
 
@@ -109,10 +112,10 @@ public class NaturalSelection {
 		this.population = newGeneration;
 	}
 	
-	private void updateFitness() throws Exception {
+	private void updateFitness(boolean isDual) throws Exception {
 		totalFitness = 0;
 		for (NeuralNetwork i : population) {
-			calculateFitness(i);
+			calculateFitness(i, isDual);
 			//System.out.println("updating fitness of net: " + i.hashid);
 			totalFitness += i.getFitness();
 		}
@@ -127,11 +130,24 @@ public class NaturalSelection {
 	 * @return fitness calculated.
 	 * @throws Exception 
 	 */
-	private void calculateFitness(NeuralNetwork i) throws Exception {
+	private void calculateFitness(NeuralNetwork i, boolean isDual) throws Exception {
 		boolean verbose = false;
-		HashMap<String, Double> metricsData = 
-				utils.binaryMetrics(i, input, expectedOutput, Global.predictionThreshold, verbose);
-		i.setFitness(metricsData.get("f1")*metricsData.get("anti-error"));
+		HashMap<String, Double> metricsData;
+		if (isDual){
+			metricsData = 
+					utils.binaryDualOutputMetrics(i, input, expectedOutput, verbose);
+		} else {
+			metricsData = 
+					utils.binaryMetrics(i, input, expectedOutput, Global.predictionThreshold, verbose);
+		}
+
+		double f1 = Double.isNaN(metricsData.get("f1"))? 0 : metricsData.get("f1");
+		double anti_error = metricsData.get("anti_error");
+		double t_d = metricsData.get("tasa_desaciertos");
+		double t_a = metricsData.get("tasa_aciertos");
+
+		double recall = metricsData.get("recall");
+		i.setFitness(anti_error);//*);//*(1-));
 	}
 	
 	/**
@@ -154,4 +170,65 @@ public class NaturalSelection {
 	    return null;
 	}
 	
+	// deprecated because overcost of sorting
+		/**
+		 * Grabs pairs of survivors randomly and mate them to create a new child.
+		 * Until the population is recovered; i.e. populationSize childs are
+		 * created.
+		 * 
+		 * @param mutationRate
+		 *            Number between 0 and 1, probability of have a random mutation
+		 *            in a gene.
+		 */
+		@Deprecated
+		public void matingPhase(double mutationRate) {
+			Random rand = new Random();
+			List<NeuralNetwork> children = new ArrayList<NeuralNetwork>();
+			// mate pairs of 25% top races
+
+			assert (population.size() >= 2); // need at least 2 after selection
+			for (int childIndex = 0; childIndex < populationSize;) {
+				int firstParent = rand.nextInt(population.size());
+				int secondParent = firstParent;
+				while (firstParent == secondParent) {
+					// parents must not be the same individual
+					secondParent = rand.nextInt(population.size());
+				}
+
+				children.add(population.get(firstParent).sex(population.get(secondParent), mutationRate));
+				childIndex++;
+			}
+			this.updateGeneration(children);
+		}
+		
+
+		/**
+		 * sorts the population by fitness descending.
+		 * @throws Exception 
+		 */
+		@Deprecated
+		public void sortByFitness(boolean isDual) throws Exception {
+			updateFitness(isDual);
+			population.sort(new Comparator<NeuralNetwork>() { // sort by fitness
+															// descending
+				public int compare(NeuralNetwork o1, NeuralNetwork o2) {
+					return -Double.compare(o1.getFitness(), o2.getFitness());
+				}
+
+			});
+			bestIndividual = population.get(0);
+		}
+		
+		/**
+		 * Selects the 'selectRate' porcent of the top fitness individuals.
+		 * 
+		 * @param selectRate
+		 *            Number between 0 and 1, rate of survivors after genocide.
+		 * @throws Exception 
+		 */
+		@Deprecated
+		public void selectStronger(double selectRate) throws Exception {
+			int lastIndex = (int) Math.ceil((selectRate * populationSize)); // genocide
+			population = new ArrayList<NeuralNetwork>(population.subList(0, lastIndex));
+		}
 }

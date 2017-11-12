@@ -8,6 +8,7 @@ import java.util.HashMap;
 import org.junit.Before;
 import org.junit.Test;
 
+import darwin.Global;
 import util.utils;
 
 public class LayerNetworkTest {
@@ -61,7 +62,7 @@ public class LayerNetworkTest {
 			System.out.println();
 			System.out.println(gateName + " neural network training test.");
 		}
-		net.train(input, expectedOutput, 1000000, gateName);
+		net.train(input, expectedOutput, 3000, false, gateName);
 		
 		// preparar datos de prueba
 		int casosTotales = 300000;
@@ -70,19 +71,23 @@ public class LayerNetworkTest {
 		for (int i = 0; i < casosTotales; i++) {
 			double seed = Math.random();
 			int randomIndex;
-			if (seed < 0.25)
+			if (seed < 0.167)
 				randomIndex = 0;
-			else if (seed < 0.5)
+			else if (seed < 0.333)
 				randomIndex = 1;
-			else if (seed < 0.75)
+			else if (seed < 0.5)
 				randomIndex = 2;
-			else
+			else if (seed < 0.6667)
 				randomIndex = 3;
+			else if (seed < 0.8333)
+				randomIndex = 4;
+			else
+				randomIndex = 5;
 			testInput[i] = input[randomIndex];
 			testOutput[i] = expectedOutput[randomIndex];
 		}
 		
-		double threshold = 0.9;
+		double threshold = Global.predictionThreshold;
 		HashMap<String, Double> metricsData = 
 				utils.binaryMetrics(net, testInput, testOutput, threshold, verbose);
 			
@@ -104,7 +109,7 @@ public class LayerNetworkTest {
 			System.out.println();
 			System.out.println(gateName + " neural network training test.");
 		}
-		net.train(input, expectedOutput, 1000000, gateName);
+		net.train(input, expectedOutput, 3000, true, gateName);
 		
 		// preparar datos de prueba
 		int casosTotales = 300000;
@@ -113,14 +118,18 @@ public class LayerNetworkTest {
 		for (int i = 0; i < casosTotales; i++) {
 			double seed = Math.random();
 			int randomIndex;
-			if (seed < 0.25)
+			if (seed < 0.167)
 				randomIndex = 0;
-			else if (seed < 0.5)
+			else if (seed < 0.333)
 				randomIndex = 1;
-			else if (seed < 0.75)
+			else if (seed < 0.5)
 				randomIndex = 2;
-			else
+			else if (seed < 0.6667)
 				randomIndex = 3;
+			else if (seed < 0.8333)
+				randomIndex = 4;
+			else
+				randomIndex = 5;
 			testInput[i] = input[randomIndex];
 			testOutput[i] = expectedOutput[randomIndex];
 		}
@@ -137,18 +146,23 @@ public class LayerNetworkTest {
 	@Test
 	public void networkXORSingleOutputLearningTest() throws Exception{		
 		// Pocas combinaciones posibles, mas enfasis al numero de epochs 
-		double[][] input = new double[4][2];
-		double[][] expectedOutput = new double[4][1];
+		double[][] input = new double[6][2];
+		double[][] expectedOutput = new double[6][1];
 
 		input[0] = new double[] {0,0};
 		input[1] = new double[] {0,1};
 		input[2] = new double[] {1,0};
 		input[3] = new double[] {1,1};
+		input[4] = new double[] {0,0};
+		input[5] = new double[] {0,0};
 
 		expectedOutput[0] = new double[] {0};
 		expectedOutput[1] = new double[] {1};
 		expectedOutput[2] = new double[] {1};
 		expectedOutput[3] = new double[] {0};
+		expectedOutput[4] = new double[] {0};
+		expectedOutput[5] = new double[] {0};
+
 		
 		boolean verbose = true;
 		networkLogicGateSingleOutputTest(input, expectedOutput, "XOR", verbose);
@@ -157,18 +171,23 @@ public class LayerNetworkTest {
 	@Test
 	public void networkANDSingleOutputLearningTest() throws Exception{		
 		// Pocas combinaciones posibles, mas enfasis al numero de epochs 
-		double[][] input = new double[4][2];
-		double[][] expectedOutput = new double[4][1];
+		double[][] input = new double[6][2];
+		double[][] expectedOutput = new double[6][1];
 
 		input[0] = new double[] {0,0};
 		input[1] = new double[] {0,1};
 		input[2] = new double[] {1,0};
 		input[3] = new double[] {1,1};
+		input[4] = new double[] {0,0};
+		input[5] = new double[] {0,0};
 
 		expectedOutput[0] = new double[] {0};
 		expectedOutput[1] = new double[] {0};
 		expectedOutput[2] = new double[] {0};
 		expectedOutput[3] = new double[] {1};
+		expectedOutput[4] = new double[] {0};
+		expectedOutput[5] = new double[] {0};
+		
 		
 		boolean verbose = true;
 		networkLogicGateSingleOutputTest(input, expectedOutput, "AND", verbose);
@@ -177,18 +196,23 @@ public class LayerNetworkTest {
 	@Test
 	public void networkORSingleOutputLearningTest() throws Exception{		
 		// Pocas combinaciones posibles, mas enfasis al numero de epochs 
-		double[][] input = new double[4][2];
-		double[][] expectedOutput = new double[4][1];
+		double[][] input = new double[6][2];
+		double[][] expectedOutput = new double[6][1];
 
 		input[0] = new double[] {0,0};
 		input[1] = new double[] {0,1};
 		input[2] = new double[] {1,0};
 		input[3] = new double[] {1,1};
+		input[4] = new double[] {0,0};
+		input[5] = new double[] {0,0};
+		
 
 		expectedOutput[0] = new double[] {0};
 		expectedOutput[1] = new double[] {1};
 		expectedOutput[2] = new double[] {1};
 		expectedOutput[3] = new double[] {1};
+		expectedOutput[4] = new double[] {0};
+		expectedOutput[5] = new double[] {0};
 		
 		boolean verbose = true;
 		networkLogicGateSingleOutputTest(input, expectedOutput, "OR", verbose);
@@ -197,18 +221,23 @@ public class LayerNetworkTest {
 	@Test
 	public void networkXORDoubleOutputLearningTest() throws Exception{		
 		// Pocas combinaciones posibles, mas enfasis al numero de epochs 
-		double[][] input = new double[4][2];
-		double[][] expectedOutput = new double[4][1];
+		double[][] input = new double[6][2];
+		double[][] expectedOutput = new double[6][1];
 
 		input[0] = new double[] {0,0};
 		input[1] = new double[] {0,1};
 		input[2] = new double[] {1,0};
 		input[3] = new double[] {1,1};
+		input[4] = new double[] {0,0};
+		input[5] = new double[] {0,0};
 
 		expectedOutput[0] = new double[] {1, 0};
 		expectedOutput[1] = new double[] {0, 1};
 		expectedOutput[2] = new double[] {0, 1};
 		expectedOutput[3] = new double[] {1, 0};
+		expectedOutput[4] = new double[] {1, 0};
+		expectedOutput[5] = new double[] {1, 0};
+
 		
 		boolean verbose = true;
 		networkLogicGateDoubleOutputTest(input, expectedOutput, "XOR_d", verbose);
@@ -217,18 +246,23 @@ public class LayerNetworkTest {
 	@Test
 	public void networkANDDoubleOutputLearningTest() throws Exception{		
 		// Pocas combinaciones posibles, mas enfasis al numero de epochs 
-		double[][] input = new double[4][2];
-		double[][] expectedOutput = new double[4][1];
+		double[][] input = new double[6][2];
+		double[][] expectedOutput = new double[6][1];
 
 		input[0] = new double[] {0,0};
 		input[1] = new double[] {0,1};
 		input[2] = new double[] {1,0};
 		input[3] = new double[] {1,1};
+		input[4] = new double[] {0,0};
+		input[5] = new double[] {0,0};
 
 		expectedOutput[0] = new double[] {1, 0};
 		expectedOutput[1] = new double[] {1, 0};
 		expectedOutput[2] = new double[] {1, 0};
 		expectedOutput[3] = new double[] {0, 1};
+		expectedOutput[4] = new double[] {1, 0};
+		expectedOutput[5] = new double[] {1, 0};
+		
 		
 		boolean verbose = true;
 		networkLogicGateDoubleOutputTest(input, expectedOutput, "AND_d", verbose);
@@ -237,18 +271,23 @@ public class LayerNetworkTest {
 	@Test
 	public void networkORDoubleOutputLearningTest() throws Exception{		
 		// Pocas combinaciones posibles, mas enfasis al numero de epochs 
-		double[][] input = new double[4][2];
-		double[][] expectedOutput = new double[4][1];
+		double[][] input = new double[6][2];
+		double[][] expectedOutput = new double[6][1];
 
 		input[0] = new double[] {0,0};
 		input[1] = new double[] {0,1};
 		input[2] = new double[] {1,0};
 		input[3] = new double[] {1,1};
+		input[4] = new double[] {0,0};
+		input[5] = new double[] {0,0};
 
 		expectedOutput[0] = new double[] {1, 0};
 		expectedOutput[1] = new double[] {0, 1};
 		expectedOutput[2] = new double[] {0, 1};
 		expectedOutput[3] = new double[] {0, 1};
+		expectedOutput[4] = new double[] {1, 0};
+		expectedOutput[5] = new double[] {1, 0};
+		
 		
 		boolean verbose = true;
 		networkLogicGateDoubleOutputTest(input, expectedOutput, "OR_d", verbose);
@@ -286,7 +325,8 @@ public class LayerNetworkTest {
 		// entrenar con mitad
 		net.train(Arrays.copyOfRange(input, 1, (int)Math.floor(dataSetSize/2)), 
 				Arrays.copyOfRange(expectedOutput, 1, (int)Math.floor(dataSetSize/2)), 
-				5000,
+				100,
+				true,
 				"DIAG");
 		
 		// evaluar con otra mitad disjunta
@@ -336,7 +376,8 @@ public class LayerNetworkTest {
 		// entrenar con mitad
 		net.train(Arrays.copyOfRange(input, 1, (int)Math.floor(dataSetSize/2)), 
 				Arrays.copyOfRange(expectedOutput, 1, (int)Math.floor(dataSetSize/2)), 
-				5000,
+				100,
+				true,
 				"DIAG_d");
 		
 		// evaluar con otra mitad disjunta

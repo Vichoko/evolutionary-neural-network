@@ -1,0 +1,25 @@
+train
+Elapsed: 0%, Generation: 0, Fitness: 9163.948991076482
+Elapsed: 10%, Generation: 1, Fitness: 9681.340287522908
+Elapsed: 20%, Generation: 2, Fitness: 10041.978004318642
+Elapsed: 30%, Generation: 3, Fitness: 10400.090830278072
+Elapsed: 40%, Generation: 4, Fitness: 10696.016350759513
+Elapsed: 50%, Generation: 5, Fitness: 11191.278700265038
+Elapsed: 60%, Generation: 6, Fitness: 11497.910895307949
+Elapsed: 70%, Generation: 7, Fitness: 11648.201662111833
+Elapsed: 80%, Generation: 8, Fitness: 11791.850800959233
+Elapsed: 90%, Generation: 9, Fitness: 11930.619918069278
+train :: 'Plot' de errores cuadraticos guardado en ../FUNGI.png
+Test data class balance:
+class 0: 3916
+class 1: 4208
+
+Metricas de desempeño de la red neuronal: 
+Numero de experimentos: 8124
+Verdaderos Positivos: 3916
+Verdaderos Negativos: 0
+Falsos Positivos: 4208
+Falsos Negativos: 0
+Tasa aciertos: 0.48202855736090594; tasa desaciertos: 0.517971442639094
+Precision: 0.48202855736090594
+Recall: 1.0

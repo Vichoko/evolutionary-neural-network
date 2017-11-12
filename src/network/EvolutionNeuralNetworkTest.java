@@ -191,8 +191,8 @@ public class EvolutionNeuralNetworkTest {
 				new double[][]{{0,0},{1,0},{0,1},{1,1}}, 
 				new double[][]{{0},{1},{1},{1}}); // OR Input/Output
 		
-		ns.getMaxFitness();
-		NeuralNetwork firstBestIndividual = ns.getMaxFitness();
+		ns.getMaxFitness(false);
+		NeuralNetwork firstBestIndividual = ns.getMaxFitness(false);
 		
 		
 		ns.matingPhaseByRoulette(Global.mutationRate);
@@ -205,8 +205,8 @@ public class EvolutionNeuralNetworkTest {
 
 			}
 		}
-		ns.getMaxFitness();
-		NeuralNetwork secondBestIndividual = ns.getMaxFitness();
+		ns.getMaxFitness(false);
+		NeuralNetwork secondBestIndividual = ns.getMaxFitness(false);
 		assertTrue(firstBestIndividual.fitness < secondBestIndividual.fitness);
 		
 		/** creo que el error esta en como se esta decidiendo el fitness; 
