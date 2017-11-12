@@ -24,6 +24,8 @@ Permite variar los parámetros:
 	public static double survivorsRate = 0.15; // Fracción de individuos que se puede reproducir (sin mecanismo de ruleta)
 	public static double predictionThreshold = 0.5; // al usar una salida singular, se necesita umbral para clasificar
 	
+## Ejecutar pruebas
+	Referir a sección de Resultados, para detalle de ejecución de pruebas.
 ## Crear red
 ### Constructor
 
@@ -180,6 +182,27 @@ Esta prueba se corre ejecutando el archivo spam.MainClass.java; para ello es nec
 La clase ejecuta todo el procesamiento de texto necesario para formatear los datos, entrenar las redes y mostrar los resultados; por lo que puede tardar varios minutos.
 Más información en  [../src/spam/README.md](src/spam/README.md).
 
+Para este experimento ocurre algo interesante.
+La red neuronal utilizara para clasificar texto contiene una cantidad exorbitante de neuronas, dado que la literatura recomienda tener una capa de entrada con una cantidad de neuronas equivalente a la cantidad de *features* del problema; el cual en este caso es la cantidad de terminos en el diccionario (después de filtrar stop-words y hacer stemming).
+Por otro lado, el algoritmo genetico requiere instanciar una población masiva de redes neuronales; las cuales en este caso son masivamente grandess.
+El resultado final, es que el programa se cae dado que no logra instanciar la población inicial de redes neuronales; por que se acaba la memoria del equipo.
+
+Este problema, a pesar de dejarnos míopes al resultado real. Nos habla de un problema intrínseco del entrenamiento de redes neuronales con algoritmos geneticos, que se discutirá en la conclusión.
+
+# Conclusión
+Luego de ejecutar todas las pruebas explicadas anteriormente se concluye:
+* El aprendizaje por este Algoritmo Genetico (en adelante A.G.) es más lento que por Back Propagation.
+* El aprendizaje por este A.G. consume más recursos que por Back Propagation, dado que requiere instanciar multiples redes neuronales (las cuales pueden tener una estructura masiva).
+* El resultado final de aprendizaje por este A.G. es un clasificador con un desempeño igual a un clasificador que etiqueta todos los datos como la misma clase (baseline).
+
+Esta ultima conclusión da para pensar las razones por las cuales puede ocurrir. Al analizar los graficos de la curva de aprendizaje, se evidencia como el fitness parece converger a un valor, en todos los ejemplos. 
+Si bien esto parece bueno, las metricas finales muestran un clasificador sin poder de clasificación real. 
+
+Esto puede ser por como se decidió que se haría el Crossing-Over entre 2 individuos. Además, de como ocurren las mutaciones dentro de los apareamientos. Y no menos importante, como se definió la función de Fitness.
+
+Se intentó con multiples modelos de apareamiento, mutación y fitness. De todos los probados, el que esta actualmente implementado fue el que alcanzó el mejor desempeño en términos de su curva de aprendizaje. Sin embargo, no se logró hacer un clasificador con un desempéño minimamente aceptable. 
+Referenciando a la literatura, existen varias publicaciones que tratan este tipo de aprendizaje, lo cual demuestra que es un tópico con profundidad teorica suficiente como para hacer una investigación en torno a ella. 
+Me parece sumamente interesante, dado que en un primer momento me pareció que podría lograr un mejor desempeño, dada la simplicidad conceptual que define los A.G.. Pero, en la práctica, resultó que en las sutilezas en la definición de la funcion de fitness, los procesos de crossing-over y mutación recae la mayoría de la responsabilidad de que el resultado final sea aceptable.
 
 
 
